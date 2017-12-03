@@ -1,0 +1,41 @@
+---
+
+- shell: uname -r
+  ignore_errors: yes
+  register: uname_output
+
+- name: Install Docker Libs
+  apt: name={{ item }} state=installed
+  with_items:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
+  - linux-image-extra-{{ uname_output.stdout }}
+  - linux-image-extra-virtual
+
+- name: Add Docker official GPG key
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+- name: Set up the stable repository for Docker
+  shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+- name: Update Apt-get
+  shell: apt-get update
+
+- name: Install Docker
+  apt: name={{ item }} state=present
+  with_items:
+  - docker-ce
+
+- name: Change Max Map Count in /etc/sysctl.conf
+  shell: echo vm.max_map_count=262144 >> /etc/sysctl.conf
+
+- name: Change Max Map Count with command
+  shell: sysctl -w vm.max_map_count=262144
+
+- name: Download docker-compose
+  shell: curl -L "https://github.com/docker/compose/releases/download/1.11.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+- name: Apply executable permissions to the binary
+  shell: chmod +x /usr/local/bin/docker-compose

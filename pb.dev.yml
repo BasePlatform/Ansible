@@ -1,0 +1,9 @@
+---
+- name: App Dev Playbook
+  hosts: default
+  become: yes
+  become_user: root
+  roles:
+     - common
+     - docker
+     - dev

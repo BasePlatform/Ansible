@@ -1,0 +1,41 @@
+---
+
+- name: Update Apt-get
+  shell: apt-get update
+
+- name: Update for node.js 8
+  shell: curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+
+- name: Install node.js
+  shell: apt-get install -y nodejs
+
+- name: Install unzip
+  shell: apt-get install -y unzip
+
+- name: Update and Install npm Cache Clean
+  shell: npm cache clean -f
+
+- name: Update and Install npm Install
+  shell: npm install -g n
+
+- name: Install Packages for Python and Build-essential
+  apt: name={{ item }} state=installed
+  with_items:
+  - libffi-dev
+  - libssl-dev
+  - python3-setuptools
+  - python3-dev
+  - build-essential
+  - python3-pip
+
+- name: Install Ansible with pip3
+  command: pip3 install ansible
+
+- name: Install Boto with pip3
+  command: pip3 install boto
+
+- name: Install Awscli with pip3
+  command: pip3 install awscli
+
+- name: Upgrade Awscli with pip3
+  command: pip3 install --upgrade awscli
